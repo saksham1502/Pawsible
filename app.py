@@ -558,11 +558,12 @@ def submit_feedback():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# Create tables before first request
+with app.app_context():
+    db.create_all()
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    os.makedirs(DOCUMENT_FOLDER, exist_ok=True)
+
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-        os.makedirs(DOCUMENT_FOLDER, exist_ok=True)
-    
     port = int(os.environ.get('PORT', 8000))
     app.run(debug=False, host='0.0.0.0', port=port)
