@@ -1,19 +1,19 @@
+import os
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-import os
 from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
 
 # Secret key for session management
-app.config['SECRET_KEY'] = 'your-secret-key-here-change-this-in-production'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here-change-this-in-production')
 
 # Database configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///users.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Upload configuration for pets
@@ -563,4 +563,6 @@ if __name__ == '__main__':
         db.create_all()
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
         os.makedirs(DOCUMENT_FOLDER, exist_ok=True)
-    app.run(debug=True, host='0.0.0.0', port=8000)
+    
+    port = int(os.environ.get('PORT', 8000))
+    app.run(debug=False, host='0.0.0.0', port=port)
